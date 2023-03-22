@@ -32,7 +32,7 @@ app.listen(PORT, () => console.log(`We are running on port ${PORT}`));
 //default--BASE-- gives proof of life
 //has two arguments where 1st is a string, 2nd arg is callback that will execute when endpoint is hit; 
 //callback takes two arg (request, and response)
-app.get('/', (request,response) => {
+app.get('/', (request, response) => {
   response.status(200).send('Welcome to my first server!');
 });
 
@@ -47,13 +47,16 @@ app.get('/hello',(request, response) => {
 });
 
 app.get('/weather', (request, response, next) => {
-
   try{
-    let queriedWeather = request.query.weather;
+    let queriedCityName = request.query.cityName;
+    //console.log(data[0].city_name);
+    let dataGroomed = data.find(weather => weather.city_name === queriedCityName); // pull on json data and it will be groomed class data
+    
+    let dataSent = new Forecast (dataGroomed); // put groomed data from class 
 
-    let dataGroomed = data.find(weather => data.data.city_name === queriedWeather); // pull on json data and it will be groomed class data
-    let dataSent = new Weather(dataGroomed); // put groomed data from class 
-
+    // console.log(dataSent)
+    let weatherInfo = dataGroomed.data;
+    console.log(weatherInfo);
     response.status(200).send(`This is the ${dataSent}`);
   
   } catch (error) {
@@ -61,13 +64,15 @@ app.get('/weather', (request, response, next) => {
   }
 })
 
-
 /// **** Class to groom bulky data -- rebuild new object from data file
 
-class Weather {
+class Forecast {
   constructor(weatherObj){
-    this.name = weatherObj.name;
-    this.clouds = weatherObj.clouds;
+    this.name = weatherObj.city_name;
+    this.lat = weatherObj.lat;
+    this.lon = weatherObj.lon;
+    this.date = weatherObj.data[0].datetime;
+    this.description = weatherObj.data[0].weather.description;
   }
 }
 

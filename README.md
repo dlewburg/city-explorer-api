@@ -25,19 +25,20 @@ WRRC
 01-01-2001 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource. -->
 
 ## Credit and Collaborations
-<!-- Give credit (and a link) to other people or resources that helped you build this application. -->
+
+Raul (TA)
 
 ## Time Estimates
 
 ### Feature #1: Set Up Server Repo
 
-Estimate of time needed to complete: _____
+Estimate of time needed to complete: 2 hours
 
-Start time: _____
+Start time: 1400
 
-Finish time: _____
+Finish time: 1600
 
-Actual time needed to complete: _____
+Actual time needed to complete: 2 hours
 
 ## Feature #2: Weather Placeholder
 
