@@ -4,27 +4,22 @@
 const express = require('express');
 require('dotenv').config(); //new npm install dotenv to run port .env file
 const cors = require('cors');
-
-
+const axios = require('axios');
 
 
 //Create something to represent server - call express after bringing it in to create server *** app === server ***
-
 const app = express();
 
 //** MIDDLEWARE - CORS ****
-
 app.use(cors());
 
 // JSON FILE
-
 let data = require('./data/data.json')
 
 // *** Port for server to run on; try not to hard code
 const PORT = process.env.PORT || 3002; //to bring in .env file
 
 //get app to run on server,  use listen method ***app.listen(PORT,callback function)
-
 app.listen(PORT, () => console.log(`We are running on port ${PORT}`));
 
 
@@ -34,30 +29,19 @@ app.listen(PORT, () => console.log(`We are running on port ${PORT}`));
 //callback takes two arg (request, and response)
 app.get('/', (request, response) => {
   response.status(200).send('Welcome to my first server!');
-});
-
-//REQUEST OBJECT ENDPOINT -- this is what the backend is looking for this and a requires a ? key 
-
-app.get('/hello',(request, response) => {
-  // console.log(request.query);
-  let userFirstName = request.query.firstName;
-  let userLastName = request.query.lastName;
-
-  response.status(200).send(`Hello ${userFirstName} ${userLastName}! Welcome to my server!`)
-});
+})
 
 app.get('/weather', (request, response, next) => {
   try{
-    let queriedCityName = request.query.cityName;
-    //console.log(data[0].city_name);
-    let dataGroomed = data.find(weather => weather.city_name === queriedCityName); // pull on json data and it will be groomed class data
+    let {cityName} = request.query;
+    let {lat} = request.query;
+    let {lon} = request.query;
     
-    let dataSent = new Forecast (dataGroomed); // put groomed data from class 
-
-    // console.log(dataSent)
-    let weatherInfo = dataGroomed.data;
-    console.log(weatherInfo);
-    response.status(200).send(`This is the ${dataSent}`);
+    let cityData = data.find(weather => weather.city_name.toLowerCase() ===  cityName.toLowerCase() && weather.lat === lat && weather.lon === lon); 
+   
+    let weatherInfo = cityData.data.map(day => new Forecast(day));
+    
+    response.status(200).send(weatherInfo);
   
   } catch (error) {
     next(error);
@@ -68,13 +52,44 @@ app.get('/weather', (request, response, next) => {
 
 class Forecast {
   constructor(weatherObj){
-    this.name = weatherObj.city_name;
-    this.lat = weatherObj.lat;
-    this.lon = weatherObj.lon;
-    this.date = weatherObj.data[0].datetime;
-    this.description = weatherObj.data[0].weather.description;
+    this.date = weatherObj.valid_date;
+    this.description = weatherObj.weather.description;
   }
 }
+
+// BUILD AN ENDPOINT THAT WILL CALL OUT AN API
+// app.get('/photos', async (request, response, next) => {
+  
+  // try {
+    // Accept queries -> photos?cityName=Value
+    // let keywordFromFrontEnd = request.query.searchQuery;
+    // build url for axios
+    //let url = `https:api.`
+
+    // let photoResults = await axios.get(url);
+
+
+    // groom data and sent it to front end 
+    // let pictureSend = photoResults.data.results.map(pic => new Photo(pic));
+
+
+    // response.status(200).send(pictureSend);
+
+  // } catch (error) {
+  //   next (error)
+  // }
+
+// });
+
+//BUILD ANOTHER CLASS TO TRIM DOWN DATA
+
+// class Photo {
+//   constructor(pics){
+//     this.src= pics.urls.regular;
+//     this.alt= pics.alt_description;
+//     this.username= pics.user.name;
+//   }
+// }
 
 
 
