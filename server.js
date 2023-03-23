@@ -33,33 +33,33 @@ app.get('/', (request, response) => {
 
 app.get('/weather', async (request, response, next) => {
 
-  try{
-    let {cityName} = request.query;
-    let {lat} = request.query;
-    let {lon} = request.query;
-    let {liveWeather} = request.query;
-    
+  try {
+    let { cityName } = request.query;
+    let { lat } = request.query;
+    let { lon } = request.query;
+    let { liveWeather } = request.query;
+
     // let cityData = data.find(weather => weather.city_name.toLowerCase() ===  cityName.toLowerCase() || weather.lat === lat && weather.lon === lon); 
-   
+
     let weatherInfoUrl = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}&days=7&units=I`
-    
+
     let axiosWeatherInfo = await axios.get(weatherInfoUrl);
 
-    
+
     // console.log(axiosWeatherInfo.data.data);
-    
+
     let weatherInfo = axiosWeatherInfo.data.data.map(day => new Forecast(day));
     // console.log('HERE:', weatherInfo);
-    
+
     response.status(200).send(weatherInfo);
-    
+
   } catch (error) {
     next(error);
   }
 })
 
 class Forecast {
-  constructor(weatherObj){
+  constructor(weatherObj) {
     this.date = weatherObj.valid_date;
     this.description = weatherObj.weather.description;
     this.max_temp = weatherObj.max_temp;
@@ -69,46 +69,50 @@ class Forecast {
 }
 
 // BUILD AN ENDPOINT THAT WILL CALL OUT AN API
-// app.get('/movies', async (request, response, next) => {
-  
-//   try {
-//     // Accept queries -> photos?cityName=Value
-//     let {movieName} = request.query
+app.get('/movies', async (request, response, next) => {
+
+  try {
+    //     // Accept queries -> photos?cityName=Value
+    let { movieName } = request.query;
+    let { cityName } = request.query;
 
 
-//     // build url for axios
+    //     // build url for axios
 
-//     let url = `https://api.themoviedb.org/3/search/movie?api_key=<your MOVIE DB KEY>&query=<city info from frontend>`
-    
-//     let photoResults = await axios.get(url);
-    
-    
-//     // groom data and sent it to front end 
-//     let pictureSend = photoResults.data.results.map(pic => new Photo(pic));
-    
-    
-//     response.status(200).send(pictureSend);
-    
-//     } catch (error) {
-//         next (error)
-//       }
-      
-//       });
-      
-      //BUILD ANOTHER CLASS TO TRIM DOWN DATA
-      
-      // class Photo {
-      //   constructor(pics){
-      //     this.src= pics.urls.regular;
-      //     this.alt= pics.alt_description;
-      //     this.username= pics.user.name;
-      //   }
-      // }
-      
-      
-      
+    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${cityName}`
+
+    let movieResults = await axios.get(url);
+
+    // console.log(movieResults.data);
+    let movieInfo = movieResults.data.results.map(movie => new Movie(movie));
+    // console.log('LOOK HERE!!!:', movieInfo);
+
+    response.status(200).send(movieInfo);
+
+  } catch (error) {
+    next(error)
+  }
+
+});
+
+//BUILD ANOTHER CLASS TO TRIM DOWN DATA
+
+class Movie {
+  constructor(flick){
+    this.title = flick.title;
+    this.overview = flick.overview;
+    this.average_votes = flick.vote_average;
+    this.total_votes = flick.vote_count;
+    this.image_url = `https://image.tmdb.org/t/p/w500${flick.poster_path}`;
+    this.popularity = flick.popularity;
+    this.released_on = flick.release_date;
+  }
+}
+
+
+
 //catch all for any missed endpoints - lives at the bottom and serve as a 404 error
-app.get('*', (request, response)=> {
+app.get('*', (request, response) => {
   response.status(404).send('This route does not exist');
 });
 
