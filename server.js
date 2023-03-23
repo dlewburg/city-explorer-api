@@ -46,9 +46,10 @@ app.get('/weather', async (request, response, next) => {
     let axiosWeatherInfo = await axios.get(weatherInfoUrl);
 
     
-    // console.log(axiosWeatherInfo);
+    // console.log(axiosWeatherInfo.data.data);
     
     let weatherInfo = axiosWeatherInfo.data.data.map(day => new Forecast(day));
+    // console.log('HERE:', weatherInfo);
     
     response.status(200).send(weatherInfo);
     
@@ -61,32 +62,38 @@ class Forecast {
   constructor(weatherObj){
     this.date = weatherObj.valid_date;
     this.description = weatherObj.weather.description;
+    this.max_temp = weatherObj.max_temp;
+    this.min_temp = weatherObj.min_temp;
+
   }
 }
 
 // BUILD AN ENDPOINT THAT WILL CALL OUT AN API
-// app.get('/', async (request, response, next) => {
+// app.get('/movies', async (request, response, next) => {
   
-  // try {
-    // Accept queries -> photos?cityName=Value
-    // let keywordFromFrontEnd = request.query.searchQuery;
-    // build url for axios
-    //let url = `https:api.`
+//   try {
+//     // Accept queries -> photos?cityName=Value
+//     let {movieName} = request.query
+
+
+//     // build url for axios
+
+//     let url = `https://api.themoviedb.org/3/search/movie?api_key=<your MOVIE DB KEY>&query=<city info from frontend>`
     
-    // let photoResults = await axios.get(url);
+//     let photoResults = await axios.get(url);
     
     
-    // groom data and sent it to front end 
-    // let pictureSend = photoResults.data.results.map(pic => new Photo(pic));
+//     // groom data and sent it to front end 
+//     let pictureSend = photoResults.data.results.map(pic => new Photo(pic));
     
     
-    // response.status(200).send(pictureSend);
+//     response.status(200).send(pictureSend);
     
-    // } catch (error) {
-      //   next (error)
-      // }
+//     } catch (error) {
+//         next (error)
+//       }
       
-      // });
+//       });
       
       //BUILD ANOTHER CLASS TO TRIM DOWN DATA
       
