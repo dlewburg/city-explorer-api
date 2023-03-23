@@ -31,18 +31,27 @@ app.get('/', (request, response) => {
   response.status(200).send('Welcome to my first server!');
 })
 
-app.get('/weather', (request, response, next) => {
+app.get('/weather', async (request, response, next) => {
+
   try{
     let {cityName} = request.query;
     let {lat} = request.query;
     let {lon} = request.query;
+    let {liveWeather} = request.query;
     
-    let cityData = data.find(weather => weather.city_name.toLowerCase() ===  cityName.toLowerCase() || weather.lat === lat && weather.lon === lon); 
+    // let cityData = data.find(weather => weather.city_name.toLowerCase() ===  cityName.toLowerCase() || weather.lat === lat && weather.lon === lon); 
    
-    let weatherInfo = cityData.data.map(day => new Forecast(day));
+    let weatherInfoUrl = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}&days=7&units=I`
+    
+    let axiosWeatherInfo = await axios.get(weatherInfoUrl);
+
+    
+    // console.log(axiosWeatherInfo);
+    
+    let weatherInfo = axiosWeatherInfo.data.data.map(day => new Forecast(day));
     
     response.status(200).send(weatherInfo);
-  
+    
   } catch (error) {
     next(error);
   }
@@ -56,41 +65,41 @@ class Forecast {
 }
 
 // BUILD AN ENDPOINT THAT WILL CALL OUT AN API
-// app.get('/photos', async (request, response, next) => {
+// app.get('/', async (request, response, next) => {
   
   // try {
     // Accept queries -> photos?cityName=Value
     // let keywordFromFrontEnd = request.query.searchQuery;
     // build url for axios
     //let url = `https:api.`
-
+    
     // let photoResults = await axios.get(url);
-
-
+    
+    
     // groom data and sent it to front end 
     // let pictureSend = photoResults.data.results.map(pic => new Photo(pic));
-
-
+    
+    
     // response.status(200).send(pictureSend);
-
-  // } catch (error) {
-  //   next (error)
-  // }
-
-// });
-
-//BUILD ANOTHER CLASS TO TRIM DOWN DATA
-
-// class Photo {
-//   constructor(pics){
-//     this.src= pics.urls.regular;
-//     this.alt= pics.alt_description;
-//     this.username= pics.user.name;
-//   }
-// }
-
-
-
+    
+    // } catch (error) {
+      //   next (error)
+      // }
+      
+      // });
+      
+      //BUILD ANOTHER CLASS TO TRIM DOWN DATA
+      
+      // class Photo {
+      //   constructor(pics){
+      //     this.src= pics.urls.regular;
+      //     this.alt= pics.alt_description;
+      //     this.username= pics.user.name;
+      //   }
+      // }
+      
+      
+      
 //catch all for any missed endpoints - lives at the bottom and serve as a 404 error
 app.get('*', (request, response)=> {
   response.status(404).send('This route does not exist');

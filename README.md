@@ -26,21 +26,21 @@ WRRC
 
 ## Credit and Collaborations
 
-Raul (TA)
+Audrey 
 
 ## Time Estimates
 
-### Feature #1: Set Up Server Repo
+### Feature #1: Weather Live
 
 Estimate of time needed to complete: 2 hours
 
-Start time: 1400
+Start time: 2200
 
-Finish time: 1600
+Finish time: 2330
 
-Actual time needed to complete: 2 hours
+Actual time needed to complete: 1 hour 30 min
 
-## Feature #2: Weather Placeholder
+## Feature #2: Movies
 
 Estimate of time needed to complete: _____
 
@@ -50,7 +50,7 @@ Finish time: _____
 
 Actual time needed to complete: _____
 
-## Feature #3: Errors
+## Feature #3: Publish
 
 Estimate of time needed to complete: _____
 
