@@ -37,7 +37,7 @@ app.get('/weather', (request, response, next) => {
     let {lat} = request.query;
     let {lon} = request.query;
     
-    let cityData = data.find(weather => weather.city_name.toLowerCase() ===  cityName.toLowerCase() && weather.lat === lat && weather.lon === lon); 
+    let cityData = data.find(weather => weather.city_name.toLowerCase() ===  cityName.toLowerCase() || weather.lat === lat && weather.lon === lon); 
    
     let weatherInfo = cityData.data.map(day => new Forecast(day));
     
@@ -47,8 +47,6 @@ app.get('/weather', (request, response, next) => {
     next(error);
   }
 })
-
-/// **** Class to groom bulky data -- rebuild new object from data file
 
 class Forecast {
   constructor(weatherObj){
