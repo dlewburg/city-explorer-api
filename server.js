@@ -4,7 +4,11 @@
 const express = require('express');
 require('dotenv').config(); //new npm install dotenv to run port .env file
 const cors = require('cors');
-const axios = require('axios');
+const getWeather = require('./modules/getWeather');
+const getMovies = require('./modules/getMovies');
+
+
+
 
 
 //Create something to represent server - call express after bringing it in to create server *** app === server ***
@@ -31,83 +35,58 @@ app.get('/', (request, response) => {
   response.status(200).send('Welcome to my first server!');
 })
 
-app.get('/weather', async (request, response, next) => {
+// async function getWeather  (request, response, next) {
+//   try {
+//     let { cityName } = request.query;
+//     let { lat } = request.query;
+//     let { lon } = request.query;
+//     let { liveWeather } = request.query;
 
-  try {
-    let { cityName } = request.query;
-    let { lat } = request.query;
-    let { lon } = request.query;
-    let { liveWeather } = request.query;
+//     let weatherInfoUrl = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}&days=7&units=I`
 
-    // let cityData = data.find(weather => weather.city_name.toLowerCase() ===  cityName.toLowerCase() || weather.lat === lat && weather.lon === lon); 
+//     let axiosWeatherInfo = await axios.get(weatherInfoUrl);
 
-    let weatherInfoUrl = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}&days=7&units=I`
+//     let weatherInfo = axiosWeatherInfo.data.data.map(day => new Forecast(day));
 
-    let axiosWeatherInfo = await axios.get(weatherInfoUrl);
+//     response.status(200).send(weatherInfo);
+
+//   } catch (error) {
+//     next(error);
+//   }
+
+// }
+
+app.get('/weather', getWeather);//async (request, response, next) => {
+
+//   try {
+//     let { cityName } = request.query;
+//     let { lat } = request.query;
+//     let { lon } = request.query;
+//     let { liveWeather } = request.query;
+
+//     let weatherInfoUrl = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}&days=7&units=I`
+
+//     let axiosWeatherInfo = await axios.get(weatherInfoUrl);
+
+//     let weatherInfo = axiosWeatherInfo.data.data.map(day => new Forecast(day));
+
+//     response.status(200).send(weatherInfo);
+
+//   } catch (error) {
+//     next(error);
+//   }
+// }
 
 
-    // console.log(axiosWeatherInfo.data.data);
 
-    let weatherInfo = axiosWeatherInfo.data.data.map(day => new Forecast(day));
-    // console.log('HERE:', weatherInfo);
-
-    response.status(200).send(weatherInfo);
-
-  } catch (error) {
-    next(error);
-  }
-})
-
-class Forecast {
-  constructor(weatherObj) {
-    this.date = weatherObj.valid_date;
-    this.description = weatherObj.weather.description;
-    this.max_temp = weatherObj.max_temp;
-    this.min_temp = weatherObj.min_temp;
-
-  }
-}
 
 // BUILD AN ENDPOINT THAT WILL CALL OUT AN API
-app.get('/movies', async (request, response, next) => {
 
-  try {
-    //     // Accept queries -> photos?cityName=Value
-    let { movieName } = request.query;
-    let { cityName } = request.query;
-
-
-    //     // build url for axios
-
-    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${cityName}`
-
-    let movieResults = await axios.get(url);
-
-    // console.log(movieResults.data);
-    let movieInfo = movieResults.data.results.map(movie => new Movie(movie));
-    // console.log('LOOK HERE!!!:', movieInfo);
-
-    response.status(200).send(movieInfo);
-
-  } catch (error) {
-    next(error)
-  }
-
-});
+app.get('/movies', getMovies);
 
 //BUILD ANOTHER CLASS TO TRIM DOWN DATA
 
-class Movie {
-  constructor(flick){
-    this.title = flick.title;
-    this.overview = flick.overview;
-    this.average_votes = flick.vote_average;
-    this.total_votes = flick.vote_count;
-    this.image_url = `https://image.tmdb.org/t/p/w500${flick.poster_path}`;
-    this.popularity = flick.popularity;
-    this.released_on = flick.release_date;
-  }
-}
+
 
 
 
