@@ -2,7 +2,7 @@
 
 const axios = require('axios');
 
-async function getWeather  (request, response, next) {
+async function getWeather(request, response, next) {
   try {
     let { cityName } = request.query;
     let { lat } = request.query;
@@ -22,7 +22,6 @@ async function getWeather  (request, response, next) {
   }
 
 }
-
 
 class Forecast {
   constructor(weatherObj) {

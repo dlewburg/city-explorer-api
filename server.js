@@ -7,10 +7,6 @@ const cors = require('cors');
 const getWeather = require('./modules/getWeather');
 const getMovies = require('./modules/getMovies');
 
-
-
-
-
 //Create something to represent server - call express after bringing it in to create server *** app === server ***
 const app = express();
 
@@ -35,59 +31,8 @@ app.get('/', (request, response) => {
   response.status(200).send('Welcome to my first server!');
 })
 
-// async function getWeather  (request, response, next) {
-//   try {
-//     let { cityName } = request.query;
-//     let { lat } = request.query;
-//     let { lon } = request.query;
-//     let { liveWeather } = request.query;
-
-//     let weatherInfoUrl = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}&days=7&units=I`
-
-//     let axiosWeatherInfo = await axios.get(weatherInfoUrl);
-
-//     let weatherInfo = axiosWeatherInfo.data.data.map(day => new Forecast(day));
-
-//     response.status(200).send(weatherInfo);
-
-//   } catch (error) {
-//     next(error);
-//   }
-
-// }
-
-app.get('/weather', getWeather);//async (request, response, next) => {
-
-//   try {
-//     let { cityName } = request.query;
-//     let { lat } = request.query;
-//     let { lon } = request.query;
-//     let { liveWeather } = request.query;
-
-//     let weatherInfoUrl = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}&days=7&units=I`
-
-//     let axiosWeatherInfo = await axios.get(weatherInfoUrl);
-
-//     let weatherInfo = axiosWeatherInfo.data.data.map(day => new Forecast(day));
-
-//     response.status(200).send(weatherInfo);
-
-//   } catch (error) {
-//     next(error);
-//   }
-// }
-
-
-
-
-// BUILD AN ENDPOINT THAT WILL CALL OUT AN API
-
+app.get('/weather', getWeather);
 app.get('/movies', getMovies);
-
-//BUILD ANOTHER CLASS TO TRIM DOWN DATA
-
-
-
 
 
 //catch all for any missed endpoints - lives at the bottom and serve as a 404 error
