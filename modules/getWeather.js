@@ -2,6 +2,8 @@
 
 const axios = require('axios');
 
+let cache = {};
+
 async function getWeather(request, response, next) {
   try {
     let { cityName } = request.query;
@@ -9,13 +11,26 @@ async function getWeather(request, response, next) {
     let { lon } = request.query;
     let { liveWeather } = request.query;
 
-    let weatherInfoUrl = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}&days=7&units=I`
+    let key = `${lat}-Forecast`;
 
-    let axiosWeatherInfo = await axios.get(weatherInfoUrl);
+    if (cache[key] && (Date.now() - cache[key].timestamp) < 7.884e+9) {
 
-    let weatherInfo = axiosWeatherInfo.data.data.map(day => new Forecast(day));
+      response.status(200).send(cache[key].data);
 
-    response.status(200).send(weatherInfo);
+    } else {
+
+      let weatherInfoUrl = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}&days=7&units=I`
+
+      let axiosWeatherInfo = await axios.get(weatherInfoUrl);
+      let weatherInfo = axiosWeatherInfo.data.data.map(day => new Forecast(day));
+
+      cache[key] = {
+        data: weatherInfo,
+        timestamp: Date.now()
+      };
+
+      response.status(200).send(weatherInfo);
+    }
 
   } catch (error) {
     next(error);
