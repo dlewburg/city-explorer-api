@@ -12,33 +12,28 @@ async function getMovies(request, response, next) {
 
   try {
 
-    
     let { movieName } = request.query;
     let { cityName } = request.query;
-    
-    let key = `${cityName}-Movie`; 
-    
-    if(cache[key] && (Date.now() - cache[key].timestamp) < 60000) {
-      console.log('Cache was hit!!!!!');
+
+    let key = `${cityName}-Movie`;
+
+    if (cache[key] && (Date.now() - cache[key].timestamp) < 8.64e+7) {
 
       response.status(200).send(cache[key].data);
 
-      
     } else {
 
-      console.log('Nothing in Cache');
-      
       let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${cityName}`
       let movieResults = await axios.get(url);
       let movieInfo = movieResults.data.results.map(movie => new Movie(movie));
-      
+
       // BUILD IT INTO CACHE
-      
+
       cache[key] = {
         data: movieInfo,
         timestamp: Date.now()
       };
-      
+
       response.status(200).send(movieInfo);
     }
 
